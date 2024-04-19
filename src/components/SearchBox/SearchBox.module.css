@@ -1,0 +1,21 @@
+.search {
+  display: flex;
+  margin: 0 auto;
+  width: 400px;
+  flex-direction: column;
+  text-align: start;
+  border: 1px solid gray;
+  margin-top: 40px;
+  margin-bottom: 40px;
+  padding: 30px;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.input {
+  text-align: start;
+  margin-bottom: 12px;
+  height: 30px;
+  border: 1px solid gray;
+  border-radius: 6px;
+}
