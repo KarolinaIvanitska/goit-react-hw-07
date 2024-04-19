@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { addContact, fetchContacts, deleteContact } from "./contactsOps";
 
 const initialContacts = [
   { id: "id-1", name: "Rosie Simpson", number: "459-12-56" },
@@ -9,6 +10,8 @@ const initialContacts = [
 
 const initialState = {
   contacts: initialContacts,
+  isLoading: false,
+  isError: null,
 };
 
 const slice = createSlice({
@@ -16,17 +19,41 @@ const slice = createSlice({
   initialState,
   selectors: {
     selectContacts: (state) => state.contacts,
+    selectIsLoading: (state) => state.isLoading,
+    selectIsError: (state) => state.isError,
   },
-  reducers: {
-    addNewContact: (state, { payload }) => {
-      state.contacts.push(payload);
-    },
-    deleteContact: (state, { payload }) => {
-      state.contacts = state.contacts.filter((item) => item.id !== payload);
-    },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchContacts.fulfilled, (state, { payload }) => {
+        state.isLoading = false;
+        state.contacts = payload;
+      })
+      .addCase(fetchContacts.pending, (state) => {
+        state.isLoading = true;
+      })
+
+      .addCase(fetchContacts.rejected, (state, { payload }) => {
+        state.isLoading = false;
+        state.isError = payload;
+      })
+
+      .addCase(deleteContact.fulfilled, (state, { payload }) => {
+        state.contacts = state.contacts.filter((item) => item.id !== payload);
+        state.isLoading = false;
+      })
+
+      .addCase(deleteContact.pending, (state) => {
+        state.isLoading = true;
+      })
+
+      .addCase(addContact.fulfilled, (state, { payload }) => {
+        state.contacts.push(payload);
+        state.isLoading = false;
+      });
   },
 });
 
 export const contactsReducer = slice.reducer;
-export const { addNewContact, deleteContact } = slice.actions;
-export const { selectContacts } = slice.selectors;
+export const { isLoading, isError } = slice.actions;
+export const { selectContacts, selectIsLoading, selectIsError } =
+  slice.selectors;
